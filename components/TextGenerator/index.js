@@ -2,6 +2,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Keyboard from '../Keyboard';
+import sentences from '../../sentences.json'
 
 const TextGenerator = () => {
 
@@ -17,14 +18,6 @@ const TextGenerator = () => {
 		return savedHighScoreHolder ? savedHighScoreHolder : "No one yet";
 	});
 
-	const [sentences] = useState([
-		"First time in a long time, hurting deeply inside, first time in a looongg timeeee, hurting.. deeply.. TRUST",
-		"Got a big stick and im finna up it on your big homie you aint gonna do shit about it",
-		"Buddy you are really learning rust when C is a language just give it up already",
-		"I am the president of the united states joe biden and i hereby declare you gay",
-		"Dylan sucks huge penis and will never type one hundred and fifty words per minute for his entire lifetime"
-	]);
-
 	const [isStarted, setIsStarted] = useState(false);
 	const [startTime, setStartTime] = useState(null);
 	const [wpm, setWpm] = useState(0);
@@ -35,7 +28,7 @@ const TextGenerator = () => {
 	const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
 
 	const [currentSentence, setCurrentSentence] = useState(() => {
-			return sentences[0].split('').map(char => ({ char, status: 'pending' }));
+		return sentences[0].split('').map(char => ({ char, status: 'pending' }));
 	});
 
 	useEffect(() => {
@@ -47,7 +40,16 @@ const TextGenerator = () => {
 			setIsStarted(true);
 			setStartTime(Date.now());
 		}
+		if (e.key === "Escape") {
+			setCurrentSentence(randomSentence().split('').map(char => ({ char, status: 'pending' })));
+			setCurrentLetterIndex(0);
+			setIsStarted(false);
+			setStartTime(null);
+			setWpm(0);
+			return;
+		}
 		if (currentLetterIndex < currentSentence.length) {
+			// 
 			if (e.key === currentSentence[currentLetterIndex].char) {
 				const newSentence = [...currentSentence];
 				newSentence[currentLetterIndex].status = 'correct';
@@ -62,7 +64,7 @@ const TextGenerator = () => {
 					const numberOfWords = currentSentence.length / 5;
 					const calculatedWpm = numberOfWords / elapsedTime;
 					setWpm(Math.round(calculatedWpm));
-				
+
 					if (calculatedWpm > highScore) {
 						setHighScore(calculatedWpm);
 						localStorage.setItem('highScore', String(calculatedWpm));
@@ -72,9 +74,6 @@ const TextGenerator = () => {
 						setHighScore(Math.round(calculatedWpm));
 						localStorage.setItem('highScore', String(Math.round(calculatedWpm)));
 					}
-
-
-					
 					setIsStarted(false);
 					setStartTime(null);
 				}
@@ -94,8 +93,8 @@ const TextGenerator = () => {
 	}, [currentSentence, currentLetterIndex]);
 
 	const handleSubmit = () => {
-			localStorage.setItem('highScoreHolder', highScoreHolder);
-			setIsEnteringUsername(false);
+		localStorage.setItem('highScoreHolder', highScoreHolder);
+		setIsEnteringUsername(false);
 	}
 
 	return (
@@ -121,11 +120,11 @@ const TextGenerator = () => {
 				<span>Words Per Minute: {wpm}</span>
 				<span className="my-4 text-green-600">The all time high score is {highScore} wpm set by {highScoreHolder}</span>
 			</div>
-			{isEnteringUsername && ( 
+			{isEnteringUsername && (
 				<div className="w-1/2 h-1/2 absolute m-auto bg-black rounded-lg border-2 border-green-600">
 					<span className='relative top-20 left-20 text-center text-xl text-green-600'>Congrats, you set a new high score!</span>
 					<span className='absolute top-36 left-20 text-lg text-slate-100'>Enter a username</span>
-					<textarea onChange={(e)=> setHighScoreHolder(e.target.value)} className="rounded-lg bg-slate-100 h-10 w-2/3 absolute resize-none text-black text-center top-44 left-20"/>
+					<textarea onChange={(e) => setHighScoreHolder(e.target.value)} className="rounded-lg bg-slate-100 h-10 w-2/3 absolute resize-none text-black px-2 pt-2 overflow:hidden top-44 left-20" />
 					<button onClick={handleSubmit} className='rounded-lg absolute px-4 left-20 top-60 py-2 bg-green-600 text-black'>submit</button>
 				</div>
 

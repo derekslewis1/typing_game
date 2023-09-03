@@ -43,7 +43,7 @@ const Keyboard = ({ currentLetter }) => {
 	}, [keys]);
 
 	return (
-		<div className="bg-slate-300 p-6 rounded-xl shadow-md h-72 w-3/5">
+		<div className="bg-slate-300 relative p-6 rounded-xl shadow-md h-72 w-3/5">
 			{rows.map((row, index) => (
 				<div key={index} className="flex justify-center mb-2">
 					{row.map(label => {
@@ -59,9 +59,9 @@ const Keyboard = ({ currentLetter }) => {
 					})}
 				</div>
 			))}
+			<span className="text-black absolute bottom-2 right-6 text-md">HHKB</span>
 		</div>
 	);
 }
 
 export default Keyboard;
-
